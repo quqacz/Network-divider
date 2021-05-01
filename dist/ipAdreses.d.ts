@@ -1,2 +1,3 @@
 declare function validateIp(ip: string): boolean;
-export { validateIp };
+declare function getNextIpAddress(ip: string): string | void;
+export { validateIp, getNextIpAddress };

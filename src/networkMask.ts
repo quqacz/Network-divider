@@ -55,8 +55,8 @@ function validateMask(checkedMask: string): boolean {
 }
 
 function validateHostsCount(checkedMask: string, count: number): boolean{
-    for(let i = 0; i < masks.length; i++){
-        if(checkedMask === masks[i].mask && count >= masks[i].numberOfHosts)
+    for(let i = masks.length - 1; i >= 0; i--){
+        if(checkedMask === masks[i].mask && count <= masks[i].numberOfHosts)
             return true;
     }
     return false;
@@ -87,4 +87,11 @@ function getDivisionBlock(mask: string): number{
     }
     return 0;
 }
-export {validateMask, getDivisions, getDivisionBlock};
+
+function getMaskForNumberOfHosts(hostsCount: number): string | void{
+    for(let i = 0; i < masks.length; i++){
+        if(hostsCount <= masks[i].numberOfHosts && masks[i + 1] && hostsCount > masks[i + 1].numberOfHosts)
+            return masks[i].mask;
+    }
+}
+export {validateMask, getDivisions, getDivisionBlock, validateHostsCount, getMaskForNumberOfHosts};

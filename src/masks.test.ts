@@ -1,4 +1,4 @@
-import {validateMask, getDivisions} from './subnetMasks';
+import {validateMask, getDivisions} from './networkMask';
 
 test('maska 0.0.0.0', ()=>{
     let resoult = validateMask('0.0.0.0');

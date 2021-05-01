@@ -21,4 +21,25 @@ function validateIp(ip: string): boolean{
     return true;
 }
 
-export {validateIp};
+function getNextIpAddress(ip: string): string | void{
+    if(!validateIp(ip))
+        return;
+    
+    const address = ip.split('.');
+    for(let i = address.length - 1; i >= 0; i--){
+        if(parseInt(address[i]) < 255) {
+            address[i] = (parseInt(address[i]) + 1).toString();
+            break;
+        }else if(address[i] === '255'){
+            address[i] = '0';
+        }
+    }
+
+    let addressToRerurn = address.join('.');
+    if(!validateIp(addressToRerurn))
+        return;
+
+    return addressToRerurn;
+
+}
+export {validateIp, getNextIpAddress};

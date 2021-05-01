@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateIp = void 0;
+exports.getNextIpAddress = exports.validateIp = void 0;
 function validateIp(ip) {
     const segments = ip.split('.');
     if (segments[0] === '0' || segments.length !== 4) {
@@ -24,3 +24,22 @@ function validateIp(ip) {
     return true;
 }
 exports.validateIp = validateIp;
+function getNextIpAddress(ip) {
+    if (!validateIp(ip))
+        return;
+    const address = ip.split('.');
+    for (let i = address.length - 1; i >= 0; i--) {
+        if (parseInt(address[i]) < 255) {
+            address[i] = (parseInt(address[i]) + 1).toString();
+            break;
+        }
+        else if (address[i] === '255') {
+            address[i] = '0';
+        }
+    }
+    let addressToRerurn = address.join('.');
+    if (!validateIp(addressToRerurn))
+        return;
+    return addressToRerurn;
+}
+exports.getNextIpAddress = getNextIpAddress;
