@@ -33,7 +33,8 @@ const masks: Mask[] = [
     {mask: '255.255.255.224', numberOfHosts: 30},
     {mask: '255.255.255.240', numberOfHosts: 14},
     {mask: '255.255.255.248', numberOfHosts: 6},
-    {mask: '255.255.255.252', numberOfHosts: 2}
+    {mask: '255.255.255.252', numberOfHosts: 2},
+    {mask: '255.255.255.254', numberOfHosts: 1}
 ]
 
 const divisions: Mask[] = [
@@ -43,7 +44,8 @@ const divisions: Mask[] = [
     {mask: '224', numberOfHosts: 32},
     {mask: '240', numberOfHosts: 16},
     {mask: '248', numberOfHosts: 8},
-    {mask: '252', numberOfHosts: 4}
+    {mask: '252', numberOfHosts: 4},
+    {mask: '254', numberOfHosts: 2}
 ]
 
 function validateMask(checkedMask: string): boolean {
@@ -55,7 +57,7 @@ function validateMask(checkedMask: string): boolean {
 }
 
 function validateHostsCount(checkedMask: string, count: number): boolean{
-    for(let i = masks.length - 1; i >= 0; i--){
+    for(let i = masks.length - 2; i >= 0; i--){
         if(checkedMask === masks[i].mask && count <= masks[i].numberOfHosts)
             return true;
     }
@@ -88,10 +90,11 @@ function getDivisionBlock(mask: string): number{
     return 0;
 }
 
-function getMaskForNumberOfHosts(hostsCount: number): string | void{
-    for(let i = 0; i < masks.length; i++){
+function getMaskForNumberOfHosts(hostsCount: number): string{
+    for(let i = 0; i < masks.length - 1; i++){
         if(hostsCount <= masks[i].numberOfHosts && masks[i + 1] && hostsCount > masks[i + 1].numberOfHosts)
             return masks[i].mask;
     }
+    return '';
 }
 export {validateMask, getDivisions, getDivisionBlock, validateHostsCount, getMaskForNumberOfHosts};

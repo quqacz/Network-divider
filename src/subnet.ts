@@ -41,7 +41,7 @@ function calculateBroadcastAddress(ip: string, mask: string): string{
     const block = getDivisionBlock(mask);
     let address = 0;
     while(true){
-        if(address < parseInt(parsedIp[block]) && (address + jumps) >= parseInt(parsedIp[block])){
+        if(address <= parseInt(parsedIp[block]) && (address + jumps) > parseInt(parsedIp[block])){
             let networkAdderss = '';
             for(let i = 0; i < parsedIp.length; i++){
                 if(i < block){
@@ -58,21 +58,40 @@ function calculateBroadcastAddress(ip: string, mask: string): string{
     }  
 }
 
-function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Network[] | string{
+function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Network[]{
     if(!validateIp(ip) || !validateMask(mask)){
-        return 'Network mask or IP adress error';
+        return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: []}];
     }
 
     const count = addressecCount.reduce((total, addresses)=> { return total += addresses}, 0);
     if(!validateHostsCount(mask, count)){
-        return 'To many hosts for that subnet mask';
+        return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: []}]
     }
     let dividedNetwork: Network[] = [];
-    let currentIp: string | void = ip, netMask, network, broadcast;
+    let currentIp = ip, netMask, network, broadcast;
     addressecCount.sort(function(a, b){return b-a});
     for(let i = 0; i < addressecCount.length; i++){
+        let hosts: string[] = [];
+        netMask = getMaskForNumberOfHosts(addressecCount[i]);
+        network = calculateNetworkAddress(currentIp, netMask);
+        broadcast = calculateBroadcastAddress(currentIp, netMask);
+        for(let j = 0; j < addressecCount[i]; j++){
+            currentIp = getNextIpAddress(currentIp);
+            hosts.push(currentIp);
+        }
+        dividedNetwork.push({networkAddress: network, broadcastAddress: broadcast, mask: netMask, hosts: hosts});
+        currentIp = getNextIpAddress(broadcast);
     }
 
-    return 'good';
+    return dividedNetwork;
 }
-export {calculateNetworkAddress, calculateBroadcastAddress, divadeNetwork};
+
+function printNetwork(newtwork: Network[]): void{
+    for(let i = 0; i < newtwork.length; i++){
+        console.log(`${newtwork[i].networkAddress}; ${newtwork[i].broadcastAddress}; ${newtwork[i].mask}`)
+        for(let j = 0; j < newtwork[i].hosts.length; j++){
+            console.log(`   ${newtwork[i].hosts[j]}`);
+        }
+    }
+}
+export {calculateNetworkAddress, calculateBroadcastAddress, divadeNetwork, printNetwork, Network};

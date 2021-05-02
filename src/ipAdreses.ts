@@ -21,9 +21,9 @@ function validateIp(ip: string): boolean{
     return true;
 }
 
-function getNextIpAddress(ip: string): string | void{
+function getNextIpAddress(ip: string): string{
     if(!validateIp(ip))
-        return;
+        return '';
     
     const address = ip.split('.');
     for(let i = address.length - 1; i >= 0; i--){
@@ -37,7 +37,7 @@ function getNextIpAddress(ip: string): string | void{
 
     let addressToRerurn = address.join('.');
     if(!validateIp(addressToRerurn))
-        return;
+        return '';
 
     return addressToRerurn;
 
