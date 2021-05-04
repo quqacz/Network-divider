@@ -61,7 +61,6 @@ function calculateBroadcastAddress(ip: string, mask: string): string{
 
 function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Network[]{
     if(!validateIp(ip) || !validateMask(mask)){
-        console.log(validateIp(ip), validateMask(mask))
         return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: [], comment: 'Mask error or ip address error'}];
     }
 
@@ -69,9 +68,11 @@ function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Ne
         return total + (Number.isNaN(Number(val)) ? 0 : Number(val));
 
     }, 0);
+
     if(!validateHostsCount(mask, count)){
         return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: [], comment: 'To many hosts for that mask'}]
     }
+    
     let dividedNetwork: Network[] = [];
     let currentIp = ip, netMask, network, broadcast;
     addressecCount.sort(function(a, b){return b-a});
