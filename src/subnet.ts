@@ -5,7 +5,8 @@ type Network = {
     networkAddress: string,
     broadcastAddress: string,
     mask: string,
-    hosts: string[]
+    hosts: string[],
+    comment?: string
 }
 
 function calculateNetworkAddress(ip: string, mask: string): string{
@@ -60,12 +61,16 @@ function calculateBroadcastAddress(ip: string, mask: string): string{
 
 function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Network[]{
     if(!validateIp(ip) || !validateMask(mask)){
-        return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: []}];
+        console.log(validateIp(ip), validateMask(mask))
+        return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: [], comment: 'Mask error or ip address error'}];
     }
 
-    const count = addressecCount.reduce((total, addresses)=> { return total += addresses}, 0);
+    const count = addressecCount.reduce(function(total, val){
+        return total + (Number.isNaN(Number(val)) ? 0 : Number(val));
+
+    }, 0);
     if(!validateHostsCount(mask, count)){
-        return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: []}]
+        return [{networkAddress: 'undefined', broadcastAddress: 'undefined', mask: 'undefined', hosts: [], comment: 'To many hosts for that mask'}]
     }
     let dividedNetwork: Network[] = [];
     let currentIp = ip, netMask, network, broadcast;
@@ -75,6 +80,7 @@ function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Ne
         netMask = getMaskForNumberOfHosts(addressecCount[i]);
         network = calculateNetworkAddress(currentIp, netMask);
         broadcast = calculateBroadcastAddress(currentIp, netMask);
+        currentIp = network;
         for(let j = 0; j < addressecCount[i]; j++){
             currentIp = getNextIpAddress(currentIp);
             hosts.push(currentIp);
@@ -88,7 +94,9 @@ function divadeNetwork(ip: string, mask: string, ...addressecCount: number[]):Ne
 
 function printNetwork(newtwork: Network[]): void{
     for(let i = 0; i < newtwork.length; i++){
-        console.log(`${newtwork[i].networkAddress}; ${newtwork[i].broadcastAddress}; ${newtwork[i].mask}`)
+        console.log(`Network address: ${newtwork[i].networkAddress}; Broadcast address: ${newtwork[i].broadcastAddress}; Network mask ${newtwork[i].mask}`)
+        if(newtwork[i].comment)
+            console.log(newtwork[i].comment);
         for(let j = 0; j < newtwork[i].hosts.length; j++){
             console.log(`   ${newtwork[i].hosts[j]}`);
         }
